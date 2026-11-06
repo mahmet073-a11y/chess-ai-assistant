@@ -4,6 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,6 +25,7 @@ public class OverlayService extends Service {
     private LinearLayout panel;
     private WindowManager.LayoutParams params;
     private TextView status;
+    private View arrowView;
     private final Button[] squares = new Button[64];
     private int cellDp = 36;
     private static OverlayService instance;
@@ -73,7 +79,40 @@ public class OverlayService extends Service {
 
         GridLayout grid = new GridLayout(this);
         grid.setColumnCount(8); grid.setRowCount(8);
-        panel.addView(grid);
+        FrameLayout boardFrame = new FrameLayout(this);
+        panel.addView(boardFrame);
+        boardFrame.addView(grid);
+        arrowView = new View(this) {
+            final Paint paint = new Paint(3);
+            @Override protected void onDraw(Canvas canvas) {
+                super.onDraw(canvas);
+                java.util.regex.Matcher matcher = java.util.regex.Pattern
+                    .compile("([a-h][1-8])\\s*→\\s*([a-h][1-8])")
+                    .matcher(Chess.suggestion);
+                if (!matcher.find()) return;
+                String a=matcher.group(1), b=matcher.group(2);
+                float size=dp(cellDp);
+                float x1=(a.charAt(0)-'a'+0.5f)*size, y1=('8'-a.charAt(1)+0.5f)*size;
+                float x2=(b.charAt(0)-'a'+0.5f)*size, y2=('8'-b.charAt(1)+0.5f)*size;
+                float dx=x2-x1,dy=y2-y1,len=(float)Math.hypot(dx,dy);
+                if(len<1)return;
+                float ux=dx/len,uy=dy/len;
+                float tipX=x2-ux*size*.19f,tipY=y2-uy*size*.19f;
+                paint.setColor(0xE6E11D48);
+                paint.setStrokeWidth(Math.max(dp(4),size*.14f));
+                paint.setStrokeCap(Paint.Cap.ROUND);
+                paint.setStyle(Paint.Style.STROKE);
+                canvas.drawLine(x1,y1,tipX-ux*size*.23f,tipY-uy*size*.23f,paint);
+                paint.setStyle(Paint.Style.FILL);
+                float wing=size*.22f,back=size*.43f;
+                Path head=new Path();head.moveTo(tipX,tipY);
+                head.lineTo(tipX-ux*back-uy*wing,tipY-uy*back+ux*wing);
+                head.lineTo(tipX-ux*back+uy*wing,tipY-uy*back-ux*wing);
+                head.close();canvas.drawPath(head,paint);
+            }
+            @Override public boolean onTouchEvent(MotionEvent e) { return false; }
+        };
+        boardFrame.addView(arrowView, new FrameLayout.LayoutParams(dp(cellDp*8),dp(cellDp*8)));
         int availableDp = (int)(getResources().getDisplayMetrics().widthPixels /
             getResources().getDisplayMetrics().density) - 36;
         cellDp = Math.min(38, Math.max(24, availableDp / 8));
@@ -140,6 +179,7 @@ public class OverlayService extends Service {
                 ((i/8+i%8)%2==0 ? 0xFFEEEED2 : 0xFF769656);
             squares[i].setBackgroundTintList(ColorStateList.valueOf(bg));
         }
+        if (arrowView != null) arrowView.invalidate();
     }
 
     public static void refresh() {
