@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 5px;
+    background: #fafafa;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    width: 304px;
+    height: 304px;
+}
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+}
+
+.light { background: #f0d9b5; }
+.dark { background: #b58863; }
+
+button {
+    padding: 7px;
+    margin: 3px;
+}
+
+#message {
+    font-size: 13px;
+    margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+<b>Satranç Antrenmanı</b>
+
+<div id="board"></div>
+
+<button onclick="suggestMove()">Hamle Öner</button>
+<button onclick="resetGame()">Yeni Oyun</button>
+
+<div id="message"></div>
+
+<script>
+const pieces = {
+    r:"♜", n:"♞", b:"♝", q:"♛",
+    k:"♚", p:"♟",
+    R:"♖", N:"♘", B:"♗", Q:"♕",
+    K:"♔", P:"♙"
+};
+
+let board = [];
+let selected = null;
+let turn = "white";
+
+function resetGame() {
+    board = [
+        "rnbqkbnr".split(""),
+        "pppppppp".split(""),
+        Array(8).fill(""),
+        Array(8).fill(""),
+        Array(8).fill(""),
+        Array(8).fill(""),
+        "PPPPPPPP".split(""),
+        "RNBQKBNR".split("")
+    ];
+
+    selected = null;
+    turn = "white";
+    drawBoard();
+}
+
+function drawBoard() {
+    const element = document.getElementById("board");
+    element.innerHTML = "";
+
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const square = document.createElement("div");
+
+            square.className = "square " +
+                ((row + col) % 2 ? "dark" : "light");
+
+            const piece = board[row][col];
+            square.textContent = pieces[piece] || "";
+
+            square.onclick = () => selectSquare(row, col);
+            element.appendChild(square);
+        }
+    }
+}
+
+function selectSquare(row, col) {
+    if (selected === null) {
+        if (!board[row][col]) return;
+
+        selected = {row, col};
+        document.getElementById("message").textContent =
+            "Hedef kareyi seç.";
+        return;
+    }
+
+    const from = selected;
+    const piece = board[from.row][from.col];
+
+    board[row][col] = piece;
+    board[from.row][from.col] = "";
+
+    selected = null;
+    turn = turn === "white" ? "black" : "white";
+
+    drawBoard();
+}
+
+function suggestMove() {
+    document.getElementById("message").textContent =
+        "Bu sürümde hamle öneri motoru henüz eklenmedi.";
+}
+
+resetGame();
+</script>
+</body>
+</html>
