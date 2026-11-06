@@ -26,7 +26,10 @@ public class MainActivity extends Activity {
         root.addView(label("Antrenman tahtası • Taşı seç, hedef kareye dokun",14));
         status=label("",16);root.addView(status);
         boardView=new GridLayout(this);boardView.setColumnCount(8);boardView.setRowCount(8);root.addView(boardView);
-        int side=getResources().getDisplayMetrics().widthPixels-20*getResources().getDisplayMetrics().density;int cell=(int)(side/8);
+        
+int side = (int) (getResources().getDisplayMetrics().widthPixels - 20 * getResources().getDisplayMetrics().density);
+int cell = side / 8;
+
         for(int i=0;i<64;i++){
             final int pos=i;Button b=new Button(this);cells[i]=b;b.setAllCaps(false);b.setTextSize(26);b.setPadding(0,0,0,0);b.setMinWidth(0);b.setMinimumWidth(0);b.setMinHeight(0);b.setMinimumHeight(0);
             GridLayout.LayoutParams lp=new GridLayout.LayoutParams(GridLayout.spec(i/8),GridLayout.spec(i%8));lp.width=cell;lp.height=cell;lp.setMargins(0,0,0,0);boardView.addView(b,lp);b.setOnClickListener(v->tap(pos));
