@@ -72,13 +72,39 @@ public class Chess {
         int best=s.w?Integer.MIN_VALUE:Integer.MAX_VALUE;
         for(Move m:moves){int v=search(apply(s,m),depth-1,alpha,beta);if(s.w){best=Math.max(best,v);alpha=Math.max(alpha,best);}else{best=Math.min(best,v);beta=Math.min(beta,best);}if(alpha>=beta)break;}return best;
     }
-    public static String recommend(){State s;int startVersion; synchronized(Chess.class){s=new State(board,white,rights,ep);startVersion=version;}
-        List<Move> moves=legal(s);if(moves.isEmpty()){String result=check(s.b,s.w)?"Şah mat":"Pat";synchronized(Chess.class){if(version==startVersion)suggestion=result;}return result;}
-        moves.sort((a,b)->Integer.compare(value(s.b[b.b]),value(s.b[a.b])));
-        int best=s.w?Integer.MIN_VALUE:Integer.MAX_VALUE;Move chosen=moves.get(0);
-        for(Move m:moves){int v=search(apply(s,m),2,Integer.MIN_VALUE+1,Integer.MAX_VALUE-1);if((s.w&&v>best)||(!s.w&&v<best)){best=v;chosen=m;}}
-        String result=coord(chosen.a)+" → "+coord(chosen.b);synchronized(Chess.class){if(version==startVersion)suggestion=result;}return result;
+    
+    public static String recommend() {
+        int startVersion;
+        String position;
+
+        synchronized (Chess.class) {
+            startVersion = version;
+            position = fen();
+        }
+
+        if (MainActivity.appContext == null) {
+            return "Uygulama başlatılmalı";
+        }
+
+        String move = StockfishEngine.bestMove(
+                MainActivity.appContext, position);
+
+        String result = move;
+
+        if (move.matches("[a-h][1-8][a-h][1-8][qrbn]?")) {
+            result = move.substring(0, 2)
+                    + " → " + move.substring(2, 4);
+        }
+
+        synchronized (Chess.class) {
+            if (version == startVersion) {
+                suggestion = result;
+            }
+        }
+
+        return result;
     }
+
     static String coord(int i){return "abcdefgh".charAt(i%8)+Integer.toString(8-i/8);}
 
     public static synchronized String fen() {
