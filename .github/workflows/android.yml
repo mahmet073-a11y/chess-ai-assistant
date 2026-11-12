@@ -26,15 +26,25 @@ jobs:
           gradle-version: '8.9'
 
       
-      - name: Download Stockfish 19
+      
+      - name: Download and package Stockfish 19
         run: |
-          mkdir -p app/src/main/assets
           curl -fL --retry 3 \
             https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-android-arm64-universal.tar.gz \
             -o /tmp/stockfish.tar.gz
-          tar -tzf /tmp/stockfish.tar.gz | grep -Ei 'arm64|aarch64|stockfish-[^/]+$|\.nnue$' | tail -30
 
+          mkdir -p app/src/main/jniLibs/arm64-v8a
 
+          tar -xzf /tmp/stockfish.tar.gz \
+            -C /tmp \
+            stockfish/stockfish-android-arm64-universal
+
+          cp /tmp/stockfish/stockfish-android-arm64-universal \
+            app/src/main/jniLibs/arm64-v8a/libstockfish.so
+
+          chmod 755 app/src/main/jniLibs/arm64-v8a/libstockfish.so
+
+          file app/src/main/jniLibs/arm64-v8a/libstockfish.so
 
       - name: Build APK
         run: gradle assembleDebug --no-daemon
