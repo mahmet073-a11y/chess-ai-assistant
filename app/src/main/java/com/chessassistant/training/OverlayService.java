@@ -144,7 +144,13 @@ public class OverlayService extends Service {
                 new Handler(getMainLooper()).post(this::render);
             }).start();
         });
-        Button reset=new Button(this); reset.setText("Yeni"); actions.addView(reset);
+        Button undo = new Button(this);
+undo.setText("↶");
+actions.addView(undo);
+undo.setOnClickListener(v -> {
+    Chess.undo();
+    render();
+});
         reset.setOnClickListener(v -> { Chess.reset(); render(); });
         Button close=new Button(this); close.setText("×"); actions.addView(close);
         close.setOnClickListener(v -> stopSelf());
