@@ -151,7 +151,8 @@ undo.setOnClickListener(v -> {
     Chess.undo();
     render();
 });
-        reset.setOnClickListener(v -> { Chess.reset(); render(); });
+ Button reset = new Button(this); reset.setText("Yeni"); actions.addView(reset);       
+reset.setOnClickListener(v -> { Chess.reset(); render(); });
         Button close=new Button(this); close.setText("×"); actions.addView(close);
         close.setOnClickListener(v -> stopSelf());
 for (int i = 0; i < actions.getChildCount(); i++) {
