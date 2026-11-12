@@ -46,7 +46,7 @@ public class OverlayService extends Service {
         panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(5), dp(5), dp(5), dp(7));
-        panel.setBackgroundColor(0x66222B37);
+        panel.setBackgroundColor(0x33222B37);
 
         TextView title = new TextView(this);
         title.setText("♟ Satranç tahtası  •  Sürükle");
