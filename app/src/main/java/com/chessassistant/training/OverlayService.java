@@ -134,7 +134,7 @@ public class OverlayService extends Service {
         }
 
         LinearLayout actions = new LinearLayout(this);
-        actions.setGravity(Gravity.CENTER);
+        actions.setPadding(0, 0, 0, 0);
         panel.addView(actions);
         Button suggest=new Button(this); suggest.setText("Öneri"); actions.addView(suggest);
         suggest.setOnClickListener(v -> {
@@ -154,6 +154,16 @@ undo.setOnClickListener(v -> {
         reset.setOnClickListener(v -> { Chess.reset(); render(); });
         Button close=new Button(this); close.setText("×"); actions.addView(close);
         close.setOnClickListener(v -> stopSelf());
+for (int i = 0; i < actions.getChildCount(); i++) {
+    View child = actions.getChildAt(i);
+    if (child instanceof Button) {
+        Button btn = (Button) child;
+        btn.setTextSize(11);
+        btn.setMinWidth(0);
+        btn.setMinimumWidth(0);
+        btn.setPadding(dp(2), 0, dp(2), 0);
+    }
+}
         wm.addView(panel,params);
         render();
         return START_STICKY;
