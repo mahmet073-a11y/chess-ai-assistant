@@ -46,7 +46,7 @@ public class OverlayService extends Service {
         panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(5), dp(5), dp(5), dp(7));
-        panel.setBackgroundColor(0xF5222B37);
+        panel.setBackgroundColor(0x66222B37);
 
         TextView title = new TextView(this);
         title.setText("♟ Satranç tahtası  •  Sürükle");
@@ -159,10 +159,10 @@ for (int i = 0; i < actions.getChildCount(); i++) {
     View child = actions.getChildAt(i);
     if (child instanceof Button) {
         Button btn = (Button) child;
-        btn.setTextSize(11);
+        btn.setTextSize(14);
         btn.setMinWidth(0);
         btn.setMinimumWidth(0);
-        btn.setPadding(dp(2), 0, dp(2), 0);
+        btn.setPadding(dp(5), 0, dp(5), 0);
     }
 }
         wm.addView(panel,params);
