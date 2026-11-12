@@ -25,6 +25,9 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Prepare Stockfish directory
+        run: mkdir -p app/src/main/assets
+
       - name: Build APK
         run: gradle assembleDebug --no-daemon
 
