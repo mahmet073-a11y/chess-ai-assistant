@@ -28,6 +28,7 @@ public class OverlayService extends Service {
     private View arrowView;
     private final Button[] squares = new Button[64];
     private int cellDp = 36;
+private boolean flipped = false;
     private static OverlayService instance;
 
     @Override public IBinder onBind(Intent intent) { return null; }
@@ -94,7 +95,14 @@ public class OverlayService extends Service {
                 float size=dp(cellDp);
                 float x1=(a.charAt(0)-'a'+0.5f)*size, y1=('8'-a.charAt(1)+0.5f)*size;
                 float x2=(b.charAt(0)-'a'+0.5f)*size, y2=('8'-b.charAt(1)+0.5f)*size;
-                float dx=x2-x1,dy=y2-y1,len=(float)Math.hypot(dx,dy);
+                if (flipped) {
+    float boardSize = size * 8;
+    x1 = boardSize - x1;
+    y1 = boardSize - y1;
+    x2 = boardSize - x2;
+    y2 = boardSize - y2;
+}
+float dx=x2-x1,dy=y2-y1,len=(float)Math.hypot(dx,dy);
                 if(len<1)return;
                 float ux=dx/len,uy=dy/len;
                 float tipX=x2-ux*size*.19f,tipY=y2-uy*size*.19f;
@@ -133,7 +141,7 @@ boardFrame.addView(arrowView, new FrameLayout.LayoutParams(dp(cellDp * 8), dp(ce
             lp.setMargins(0,0,0,0);
             grid.addView(b,lp);
             squares[i]=b;
-            b.setOnClickListener(v -> onSquare(pos));
+            b.setOnClickListener(v -> onSquare(flipped ? 63 - pos : pos));
         }
 
         LinearLayout actions = new LinearLayout(this);
@@ -156,7 +164,17 @@ undo.setOnClickListener(v -> {
 });
  Button reset = new Button(this); reset.setText("Yeni"); actions.addView(reset);       
 reset.setOnClickListener(v -> { Chess.reset(); render(); });
-        Button close=new Button(this); close.setText("×"); actions.addView(close);
+        
+        Button flip = new Button(this);
+        flip.setText("⇅");
+        actions.addView(flip);
+        flip.setOnClickListener(v -> {
+            flipped = !flipped;
+            Chess.selected = -1;
+            render();
+        });
+
+Button close=new Button(this); close.setText("×"); actions.addView(close);
         close.setOnClickListener(v -> stopSelf());
 for (int i = 0; i < actions.getChildCount(); i++) {
     View child = actions.getChildAt(i);
@@ -190,12 +208,13 @@ for (int i = 0; i < actions.getChildCount(); i++) {
         status.setText((Chess.white ? "Beyaz" : "Siyah") + " oynar • " + Chess.suggestion);
         String white="♔♕♖♗♘♙", black="♚♛♜♝♞♟";
         for (int i=0;i<64;i++) {
-            char p=Chess.board[i];
+            int boardPos = flipped ? 63 - i : i;
+char p = Chess.board[boardPos];
             int idx="KQRBNP".indexOf(Character.toUpperCase(p));
             squares[i].setText(p=='.' ? "" : String.valueOf(
                 (Chess.isWhite(p)?white:black).charAt(idx)));
             squares[i].setTextColor(Color.BLACK);
-            int bg=i==Chess.selected ? 0xFFFFD34D :
+            int bg=boardPos==Chess.selected ? 0xFFFFD34D :
                 ((i/8+i%8)%2==0 ? 0xFFEEEED2 : 0xFF769656);
             squares[i].setBackgroundTintList(ColorStateList.valueOf(bg));
         }
