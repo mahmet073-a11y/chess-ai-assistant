@@ -115,7 +115,7 @@ public class OverlayService extends Service {
         boardFrame.addView(arrowView, new FrameLayout.LayoutParams(dp(cellDp*8),dp(cellDp*8)));
         int availableDp = (int)(getResources().getDisplayMetrics().widthPixels /
             getResources().getDisplayMetrics().density) - 36;
-        cellDp = Math.min(38, Math.max(24, availableDp / 8));
+        cellDp = Math.min(27, Math.max(17, (int)(availableDp / 8f * 0.70f)));
         for (int i=0; i<64; i++) {
             final int pos=i;
             Button b=new Button(this);
