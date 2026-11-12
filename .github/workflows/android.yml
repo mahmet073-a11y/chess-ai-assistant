@@ -32,7 +32,9 @@ jobs:
           curl -fL --retry 3 \
             https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-android-arm64-universal.tar.gz \
             -o /tmp/stockfish.tar.gz
-          tar -tzf /tmp/stockfish.tar.gz | head -20
+          
+tar -tzf /tmp/stockfish.tar.gz | grep -Ei 'arm64|aarch64|stockfish-[^/]+$|\.nnue$' | tail -30
+
 
 
       - name: Build APK
