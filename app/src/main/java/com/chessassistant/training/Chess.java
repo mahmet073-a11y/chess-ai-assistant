@@ -76,7 +76,7 @@ public class Chess {
         List<Move> moves=legal(s);if(moves.isEmpty()){String result=check(s.b,s.w)?"Şah mat":"Pat";synchronized(Chess.class){if(version==startVersion)suggestion=result;}return result;}
         moves.sort((a,b)->Integer.compare(value(s.b[b.b]),value(s.b[a.b])));
         int best=s.w?Integer.MIN_VALUE:Integer.MAX_VALUE;Move chosen=moves.get(0);
-        for(Move m:moves){int v=search(apply(s,m),3,Integer.MIN_VALUE+1,Integer.MAX_VALUE-1);if((s.w&&v>best)||(!s.w&&v<best)){best=v;chosen=m;}}
+        for(Move m:moves){int v=search(apply(s,m),2,Integer.MIN_VALUE+1,Integer.MAX_VALUE-1););if((s.w&&v>best)||(!s.w&&v<best)){best=v;chosen=m;}}
         String result=coord(chosen.a)+" → "+coord(chosen.b);synchronized(Chess.class){if(version==startVersion)suggestion=result;}return result;
     }
     static String coord(int i){return "abcdefgh".charAt(i%8)+Integer.toString(8-i/8);}
