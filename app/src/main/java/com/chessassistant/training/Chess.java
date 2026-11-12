@@ -80,4 +80,41 @@ public class Chess {
         String result=coord(chosen.a)+" → "+coord(chosen.b);synchronized(Chess.class){if(version==startVersion)suggestion=result;}return result;
     }
     static String coord(int i){return "abcdefgh".charAt(i%8)+Integer.toString(8-i/8);}
+
+    public static synchronized String fen() {
+        StringBuilder f = new StringBuilder();
+
+        for (int r = 0; r < 8; r++) {
+            int empty = 0;
+            for (int c = 0; c < 8; c++) {
+                char p = board[r * 8 + c];
+                if (p == '.') {
+                    empty++;
+                } else {
+                    if (empty > 0) {
+                        f.append(empty);
+                        empty = 0;
+                    }
+                    f.append(p);
+                }
+            }
+            if (empty > 0) f.append(empty);
+            if (r < 7) f.append('/');
+        }
+
+        f.append(white ? " w " : " b ");
+
+        String castle = "";
+        if ((rights & 1) != 0) castle += "K";
+        if ((rights & 2) != 0) castle += "Q";
+        if ((rights & 4) != 0) castle += "k";
+        if ((rights & 8) != 0) castle += "q";
+
+        f.append(castle.isEmpty() ? "-" : castle);
+        f.append(' ');
+        f.append(ep < 0 ? "-" : coord(ep));
+        f.append(" 0 1");
+
+        return f.toString();
+    }
 }
