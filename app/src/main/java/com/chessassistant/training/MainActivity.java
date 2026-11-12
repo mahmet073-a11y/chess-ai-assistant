@@ -17,7 +17,12 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     LinearLayout root;GridLayout boardView;TextView status;Button[] cells=new Button[64];
-    @Override public void onCreate(Bundle b){super.onCreate(b);build();}
+    @Override public void onCreate(Bundle b){
+    super.onCreate(b);
+    appContext = getApplicationContext();
+    build();
+}
+public static android.content.Context appContext;
     TextView label(String s,int size){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(Color.rgb(30,40,55));t.setGravity(Gravity.CENTER);t.setPadding(8,12,8,12);return t;}
     Button button(String s,Runnable action){Button b=new Button(this);b.setText(s);b.setOnClickListener(v->action.run());return b;}
     void build(){
